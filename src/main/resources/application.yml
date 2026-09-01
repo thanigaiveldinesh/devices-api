@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: devices-api
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/devicesdb}
+    username: ${DB_USERNAME:devices}
+    password: ${DB_PASSWORD:devices}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+  info:
+    env:
+      enabled: true
+
+info:
+  app:
+    name: Devices API
+    version: 1.0.0
+    description: REST API for managing device resources
+
+logging:
+  level:
+    com.devices.api: INFO
+    org.hibernate.SQL: WARN

@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: devices-db
+    environment:
+      POSTGRES_DB: devicesdb
+      POSTGRES_USER: devices
+      POSTGRES_PASSWORD: devices
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U devices -d devicesdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: devices-api
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/devicesdb
+      DB_USERNAME: devices
+      DB_PASSWORD: devices
+      SERVER_PORT: 8080
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
